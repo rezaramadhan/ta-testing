@@ -2,6 +2,7 @@
 #include <time.h>
 #include "bn_test.c"
 #include "rsa_test.c"
+#include "dh_test.c"
 
 typedef struct timespec time_s;
 
@@ -19,6 +20,7 @@ int main(int argc, char const *argv[]) {
     clock_gettime(CLOCK_MONOTONIC, &start);
     bn_func();
     rsa_test();
+    dh_test();
     clock_gettime(CLOCK_MONOTONIC, &finish);
 
     print_result(start, finish);
