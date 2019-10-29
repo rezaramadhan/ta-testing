@@ -25,9 +25,7 @@ void dh_test(int key_size) {
     /* Generate the public and private key pair */
     if(1 != DH_generate_key(dh_alice)) handleErrors("err_gen_key");
 
-    /* Receive the public key from the peer. In this example we're just hard coding a value */
-    // BIGNUM *pubkey = NULL;
-    // if(0 == (BN_dec2bn(&pubkey, "01234567890123456789012345678901234567890123456789"))) handleErrors("err_bn_conv");
+    /* Receive the public key from the peer.*/
     if(NULL == (dh_bob = DH_new())) handleErrors("err_new");
     dh_bob->p = BN_dup(dh_alice->p);
     dh_bob->q = BN_dup(dh_alice->q);
@@ -44,7 +42,6 @@ void dh_test(int key_size) {
     if(0 > (secret_size = DH_compute_key(secret, pubkey, dh_alice))) handleErrors("err_compute_secret");
 
     /* Do something with the shared secret */
-    /* Note secret_size may be less than DH_size(dh_alice) */
     printf("The shared secret is:\n");
     BIO_dump_fp(stdout, secret, secret_size);
 

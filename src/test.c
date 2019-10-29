@@ -58,18 +58,51 @@ void invalid_args() {
     error("invalid arguments", 7);
 }
 
+void process_opts(char* opt, int* i) {
+    if (strcmp(opt, "add") == 0)
+        i[0] = 1;
+    else if (strcmp(opt, "mul") == 0)
+        i[1] = 1;
+    else if (strcmp(opt, "div") == 0)
+        i[2] = 1;
+    else if (strcmp(opt, "exp") == 0)
+        i[3] = 1;
+    else if (strcmp(opt, "modexp") == 0)
+        i[4] = 1;
+    else
+        error("invalid bn_test options", 1);
+
+}
+
 void run(char opt, char const *argv[]) {
-    int a;
-    printf("%s\n", argv[0]);
+    int a, b;
+
     if (0 == (a = strtol(argv[1], NULL, 10)))
         error("invalid str to int conversion", 1);
+
+    if (opt == 'r')
+        if (0 == (b = strtol(argv[2], NULL, 10)))
+            error("invalid str to int conversion", 1);
+
+    if (opt == 'b')
+        if (a > TC_CNT) error("invalid tc number", 1);
+
+        int i_arr[BN_OPR_COUNT] = {0};
+        char *ptr, *bntest_opt = strdup(argv[2]);
+
+        ptr = strtok(bntest_opt, ",");
+        while(ptr != NULL) {
+            process_opts(ptr, i_arr);
+
+            ptr = strtok(NULL, ",");
+        }
 
     time_s start, finish;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
     switch (opt) {
-        case 'b': bn_func(); break;
-        case 'r': rsa_test(); break;
+        case 'b': bn_func(a, i_arr); break;
+        case 'r': rsa_test(a, b - 1); break;
         case 'd': dh_test(a); break;
         default: error("invalid case args", 3);
     }
@@ -79,7 +112,7 @@ void run(char opt, char const *argv[]) {
 }
 
 int main(int argc, char const *argv[]) {
-    if (argc > 3 || argc < 2) invalid_args();
+    if (argc < 2 || argc > 4) invalid_args();
 
     if (strcmp(argv[1], "bn") == 0 && argc == 4)
         run('b', &argv[1]);

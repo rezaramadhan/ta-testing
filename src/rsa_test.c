@@ -19,19 +19,16 @@ void rsa_save_keys(RSA* rsa) {
     BIO_free_all(bp_private);
 }
 
-void rsa_test() {
+void rsa_test(int key_size, unsigned long e) {
     RSA *rsa = NULL;
     BIGNUM *bne = NULL;
-
-    int bits = 4096;
-    unsigned long e = RSA_F4;
 
     // 1. generate rsa key
     bne = BN_new();
     BN_set_word(bne,e);
 
     rsa = RSA_new();
-    RSA_generate_key_ex(rsa, bits, bne, NULL);
+    RSA_generate_key_ex(rsa, key_size, bne, NULL);
 
     // save keys
     // rsa_save_keys(rsa);
