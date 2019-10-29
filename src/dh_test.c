@@ -6,11 +6,10 @@ void handleErrors(char* msg) {
     exit(1);
 }
 
-void dh_test() {
-    DH *dh_alice;
+void dh_test(int key_size) {
+    DH *dh_alice, *dh_bob;
     int codes;
     int secret_size;
-    int key_size = 512;
 
     /* Generate the parameters to be used */
     if(NULL == (dh_alice = DH_new())) handleErrors("err_new");
@@ -19,8 +18,6 @@ void dh_test() {
     if(1 != DH_check(dh_alice, &codes)) handleErrors("err_check");
     if(codes != 0)
     {
-        /* Problems have been found with the generated parameters */
-        /* Handle these here - we'll just abort for this example */
         printf("DH_check failed\n");
         abort();
     }
@@ -29,8 +26,16 @@ void dh_test() {
     if(1 != DH_generate_key(dh_alice)) handleErrors("err_gen_key");
 
     /* Receive the public key from the peer. In this example we're just hard coding a value */
-    BIGNUM *pubkey = NULL;
-    if(0 == (BN_dec2bn(&pubkey, "01234567890123456789012345678901234567890123456789"))) handleErrors("err_bn_conv");
+    // BIGNUM *pubkey = NULL;
+    // if(0 == (BN_dec2bn(&pubkey, "01234567890123456789012345678901234567890123456789"))) handleErrors("err_bn_conv");
+    if(NULL == (dh_bob = DH_new())) handleErrors("err_new");
+    dh_bob->p = BN_dup(dh_alice->p);
+    dh_bob->q = BN_dup(dh_alice->q);
+    dh_bob->g = BN_dup(dh_alice->g);
+
+
+    if(1 != DH_generate_key(dh_bob)) handleErrors("err_gen_key");
+    BIGNUM *pubkey = dh_bob->pub_key;
 
     /* Compute the shared secret */
     unsigned char *secret;
