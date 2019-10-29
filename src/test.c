@@ -1,3 +1,12 @@
+/*
+    How to run:
+    test {bn|rsa|dh}
+
+     bn option -> <tc_number> {add,mul,div,exp,modexp}
+    rsa option -> <key_size> <exponential>
+     dh option -> <key_size>
+*/
+
 #include <stdio.h>
 #include <time.h>
 #include "bn_test.c"
