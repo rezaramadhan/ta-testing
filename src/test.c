@@ -22,7 +22,7 @@ void print_result(time_s start, time_s finish) {
     elapsed = (finish.tv_sec - start.tv_sec)*1000000;
     elapsed += (finish.tv_nsec - start.tv_nsec) / 1000.0;
 
-    printf("%.2f\n", elapsed);
+    fprintf(stdout, "%.2f\n", elapsed);
 }
 
 
@@ -42,7 +42,7 @@ void print_result(time_s start, time_s finish) {
         13             Permission denied
 */
 void error(char * msg, int err_code) {
-    printf("_ERROR: %s\n", msg);
+    fprintf(stderr, "_ERROR: %s\n", msg);
     exit(err_code);
 }
 
@@ -76,7 +76,6 @@ void process_opts(char* opt, int* i) {
 
 void run(char opt, char const *argv[]) {
     int a, b;
-
     if (0 == (a = strtol(argv[1], NULL, 10)))
         error("invalid str to int conversion", 1);
 
@@ -84,10 +83,10 @@ void run(char opt, char const *argv[]) {
         if (0 == (b = strtol(argv[2], NULL, 10)))
             error("invalid str to int conversion", 1);
 
-    if (opt == 'b')
+    int i_arr[BN_OPR_COUNT] = {0};
+    if (opt == 'b') {
         if (a > TC_CNT) error("invalid tc number", 1);
 
-        int i_arr[BN_OPR_COUNT] = {0};
         char *ptr, *bntest_opt = strdup(argv[2]);
 
         ptr = strtok(bntest_opt, ",");
@@ -96,13 +95,14 @@ void run(char opt, char const *argv[]) {
 
             ptr = strtok(NULL, ",");
         }
+    }
 
     time_s start, finish;
-
     clock_gettime(CLOCK_MONOTONIC, &start);
+
     switch (opt) {
-        case 'b': bn_func(a, i_arr); break;
-        case 'r': rsa_test(a, b - 1); break;
+        case 'b': bn_func(a - 1, i_arr); break;
+        case 'r': rsa_test(a, b); break;
         case 'd': dh_test(a); break;
         default: error("invalid case args", 3);
     }

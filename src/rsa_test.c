@@ -37,10 +37,10 @@ void rsa_test(int key_size, unsigned long e) {
     char *msg = "THIS IS A MESSAGE\0";
     char enc_msg[RSA_size(rsa)];
     char dec_msg[RSA_size(rsa)];
-    printf("%d\n", RSA_size(rsa));
+    // printf("%d\n", RSA_size(rsa));
     RSA_public_encrypt(strlen(msg), msg, enc_msg, rsa, RSA_PKCS1_OAEP_PADDING);
     RSA_private_decrypt(RSA_size(rsa), enc_msg, dec_msg, rsa, RSA_PKCS1_OAEP_PADDING);
-    printf("%s\n", dec_msg);
+    // printf("%s\n", dec_msg);
     // 4. free
 
     RSA_free(rsa);

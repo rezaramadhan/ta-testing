@@ -15,12 +15,12 @@ void dh_test(int key_size) {
     if(NULL == (dh_alice = DH_new())) handleErrors("err_new");
     if(1 != DH_generate_parameters_ex(dh_alice, key_size, DH_GENERATOR_2, NULL)) handleErrors("err_gen_param");
 
-    if(1 != DH_check(dh_alice, &codes)) handleErrors("err_check");
-    if(codes != 0)
-    {
-        printf("DH_check failed\n");
-        abort();
-    }
+    // if(1 != DH_check(dh_alice, &codes)) handleErrors("err_check");
+    // if(codes != 0)
+    // {
+    //     printf("DH_check failed\n");
+    //     abort();
+    // }
 
     /* Generate the public and private key pair */
     if(1 != DH_generate_key(dh_alice)) handleErrors("err_gen_key");
@@ -42,11 +42,13 @@ void dh_test(int key_size) {
     if(0 > (secret_size = DH_compute_key(secret, pubkey, dh_alice))) handleErrors("err_compute_secret");
 
     /* Do something with the shared secret */
-    printf("The shared secret is:\n");
-    BIO_dump_fp(stdout, secret, secret_size);
-
+    // printf("The shared secret is:\n");
+    // BIO_dump_fp(stdout, secret, secret_size);
+    // BIGNUM* bnsecret = NULL;
+    // bnsecret = BN_bin2bn(secret, strlen(secret), NULL);
+    // printf("secret_length %d bit\n", BN_num_bits(bnsecret));
     /* Clean up */
     OPENSSL_free(secret);
-    BN_free(pubkey);
     DH_free(dh_alice);
+    DH_free(dh_bob);
 }
