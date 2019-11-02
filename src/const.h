@@ -1,5 +1,5 @@
 #define BN_COUNT 3
-#define TC_COUNT 3
+#define TC_COUNT 29
 
 #define BN_OPR_COUNT 5
 

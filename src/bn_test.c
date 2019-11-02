@@ -1,16 +1,18 @@
 #include <openssl/bn.h>
-#include "bn_test_tc.c"
+// #include "bn_test_tc.c"
 #include "const.h"
 
-void bn_func(int tc_num, int* opt) {
+void bn_func(int bn_size, int* opt) {
     BIGNUM* bn[BN_COUNT];
     BN_CTX* bn_ctx = BN_CTX_new();
     BIGNUM* result = BN_new();
     // printf("%d\n", len);
-    for (int i = 0; i < BN_COUNT; i++) {
-        bn[i] = NULL;
-        BN_hex2bn(&bn[i], bn_hex[i][tc_num]);
+    for (int i = 1; i < BN_COUNT; i++) {
+        bn[i] = BN_new();
+        BN_pseudo_rand(bn[i], bn_size, -1, 0);
     }
+    bn[0] = BN_new();
+    BN_pseudo_rand(bn[0], bn_size/64, -1, 0);
 
     if (opt[0])
         BN_add(result, bn[1], bn[2]);
@@ -21,7 +23,7 @@ void bn_func(int tc_num, int* opt) {
     if (opt[3])
         BN_exp(result, bn[1], bn[2], bn_ctx);
     if (opt[4])
-        BN_mod_exp(result, bn[1], bn[2], bn[0], bn_ctx);
+        BN_mod_exp(result, bn[1], bn[0], bn[2], bn_ctx);
 
     BN_CTX_free(bn_ctx);
     BN_free(result);

@@ -85,15 +85,13 @@ void run(char opt, char const *argv[]) {
 
     int i_arr[BN_OPR_COUNT] = {0};
     if (opt == 'b') {
-        if (a > TC_CNT) error("invalid tc number", 1);
-
         char *ptr, *bntest_opt = strdup(argv[2]);
 
-        ptr = strtok(bntest_opt, ",");
+        ptr = strtok(bntest_opt, ";");
         while(ptr != NULL) {
             process_opts(ptr, i_arr);
 
-            ptr = strtok(NULL, ",");
+            ptr = strtok(NULL, ";");
         }
     }
 

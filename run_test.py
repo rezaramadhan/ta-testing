@@ -4,19 +4,21 @@ import subprocess
 import os
 import itertools
 import csv
+import re
 from copy import deepcopy
 from statistics import mean
 from pprint import pprint
 
-RUN_COUNT = 3
-TC_COUNT = 3
+RUN_COUNT = 5
+TC_COUNT = 20
 ARGS = {
     'dh': {
         '1.key_size': [64 * i for i in range(1, 19)]
     },
     'bn': {
-        '1.tc_num': [i for i in range(1, TC_COUNT + 1)],
-        '2.opr': ['add', 'div', 'mul', 'modexp', 'add,div,mul,modexp']
+        '1.tc_num': [8192*i*8 for i in range(1, TC_COUNT + 1)],
+        # '2.opr': ['add', 'div', 'mul', 'modexp']
+        '2.opr': ['add']
     },
     'rsa': {
         '1.key_size': [64 * i for i in range(1, 5)],
@@ -47,6 +49,14 @@ def print_file_csv(filename, header, file_content):
         for item in file_content:
             print(item)
             writer.writerow(item)
+
+    with open(filename, mode='r') as fin:
+        lines = fin.readlines()
+
+    lines[0] = re.sub(r'\d+\.','',lines[0])
+
+    with open(filename, mode='w') as fout:
+        fout.writelines(lines)
 
 def get_params(mode):
     command_args = []
@@ -109,7 +119,7 @@ def main(arg):
                 row = arg.copy()
                 row_avg = arg.copy()
                 header.extend(['0.time', '0.time_avg'])
-                row['0.time'] = str(result)
+                row['0.time'] = str(result).replace(', ', '|')
                 row['0.time_avg'] = round(mean(result), 2)
                 test_data.append(row)
 
