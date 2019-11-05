@@ -47,10 +47,11 @@ void error(char * msg, int err_code) {
 }
 
 void help() {
-    printf("test {bn|rsa|dh} {test arguments}\n\n");
-    printf(" bntest arguments : <tc_number> {add,mul,div,exp,modexp}\n");
-    printf("rsatest arguments : <key_size> <exponential>\n");
-    printf(" dhtest arguments : <key_size>\n\n");
+    printf("test {bn|rsa_gen|rsa_enc|dh} {test arguments}\n\n");
+    printf("bn test arguments : <tc_number> {add,mul,div,exp,modexp}\n");
+    printf("rsa_gen test arguments : <key_size> <exponential>\n");
+    printf("rsa_enc test arguments : <message_size>\n");
+    printf("dh test arguments : <key_size>\n\n");
 }
 
 void invalid_args() {
@@ -68,6 +69,8 @@ void process_opts(char* opt, int* i) {
     else if (strcmp(opt, "exp") == 0)
         i[3] = 1;
     else if (strcmp(opt, "modexp") == 0)
+        i[4] = 1;
+    else if (strcmp(opt, "modmul") == 0)
         i[4] = 1;
     else
         error("invalid bn_test options", 1);
@@ -100,7 +103,8 @@ void run(char opt, char const *argv[]) {
 
     switch (opt) {
         case 'b': bn_func(a - 1, i_arr); break;
-        case 'r': rsa_test(a, b); break;
+        case 'r': rsa_gen_key(a, b); break;
+        case 'R': rsa_enc(a); break;
         case 'd': dh_test(a); break;
         default: error("invalid case args", 3);
     }
@@ -114,8 +118,10 @@ int main(int argc, char const *argv[]) {
 
     if (strcmp(argv[1], "bn") == 0 && argc == 4)
         run('b', &argv[1]);
-    else if (strcmp(argv[1], "rsa") == 0 && argc == 4)
+    else if (strcmp(argv[1], "rsa_gen") == 0 && argc == 4)
         run('r', &argv[1]);
+    else if (strcmp(argv[1], "rsa_enc") == 0 && argc == 3)
+        run('R', &argv[1]);
     else if (strcmp(argv[1], "dh") == 0 && argc == 3)
         run('d', &argv[1]);
     else invalid_args();

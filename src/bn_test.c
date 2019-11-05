@@ -19,10 +19,12 @@ void bn_func(int bn_size, int* opt) {
     if (opt[1])
         BN_mul(result, bn[1], bn[2], bn_ctx);
     if (opt[2])
-        BN_div(result, NULL, bn[1], bn[2], bn_ctx);
+        BN_div(result, NULL, bn[1], bn[0], bn_ctx);
     if (opt[3])
         BN_exp(result, bn[1], bn[2], bn_ctx);
     if (opt[4])
+        BN_mod_mul(result, bn[1], bn[2], bn[0], bn_ctx);
+    if (opt[5])
         BN_mod_exp(result, bn[1], bn[0], bn[2], bn_ctx);
 
     BN_CTX_free(bn_ctx);
