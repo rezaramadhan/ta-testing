@@ -10,7 +10,7 @@ from statistics import mean
 from pprint import pprint
 from shutil import copyfile
 
-COPY_RESULT = True
+COPY_RESULT = False
 TEX_DIR = '../../ta-latex/src/resources/csv/'
 
 RUN_COUNT = 5
@@ -26,6 +26,8 @@ RSA_KDATA_DIFF = 0
 RSA_ESTART = 29
 RSA_EINCREMENT = 32
 
+DEVICE_ID = 1
+
 ARGS = {
     'dh': {
         '1.key_size': [DH_INCREMENT * i for i in range(DH_START, DATA_SIZE + DH_START)]
@@ -39,7 +41,7 @@ ARGS = {
             'modmul' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
         },
         # '2.opr': ['add', 'div', 'mul', 'modexp']
-        '2.opr': ['modmul']
+        '2.opr': ['add']
     },
     'rsa_gen': {
         '1.key_size': [RSA_KINCREMENT * i for i in range(RSA_KSTART, DATA_SIZE + RSA_KSTART - RSA_KDATA_DIFF)],
@@ -190,7 +192,7 @@ def main(arg):
                 test_data.append(row)
 
             pprint(test_data)
-            filename = RESULT_DIR + mode + '.csv'
+            filename = RESULT_DIR + mode + DEVICE_ID + '.csv'
             print_file_csv(filename, sorted(header), test_data)
 
             if mode == 'bn':
