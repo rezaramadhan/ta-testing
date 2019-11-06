@@ -102,7 +102,7 @@ void run(char opt, char const *argv[]) {
     clock_gettime(CLOCK_MONOTONIC, &start);
 
     switch (opt) {
-        case 'b': bn_func(a - 1, i_arr); break;
+        case 'b': bn_func(a, i_arr); break;
         case 'r': rsa_gen_key(a, b); break;
         case 'R': rsa_enc(a); break;
         case 'd': dh_test(a); break;

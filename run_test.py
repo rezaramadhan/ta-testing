@@ -34,7 +34,7 @@ ARGS = {
     },
     'bn': {
         '1.tc_num': {
-            'add' : [4096*4*i*8 for i in range(1, DATA_SIZE + 1)],
+            'add' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
             'div' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
             'mul' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
             'modexp' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
@@ -107,7 +107,7 @@ def separate_csv(filename):
 
         for row in rows[1:]:
             col = row.rstrip().split(',')
-            print(col)
+            # print(col)
             outfiles[col[-1]].write(row)
 
         # Close files
@@ -191,8 +191,8 @@ def main(arg):
                 row['0.time_avg'] = round(mean(result), 2)
                 test_data.append(row)
 
-            pprint(test_data)
-            filename = RESULT_DIR + mode + DEVICE_ID + '.csv'
+            # pprint(test_data)
+            filename = RESULT_DIR + mode + str(DEVICE_ID) + '.csv'
             print_file_csv(filename, sorted(header), test_data)
 
             if mode == 'bn':
