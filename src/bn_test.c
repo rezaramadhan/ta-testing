@@ -2,6 +2,14 @@
 // #include "bn_test_tc.c"
 #include "const.h"
 
+void print_opt(int* opt, int n) {
+    printf("opt ");
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", opt[i]);
+    }
+    printf("\n");
+}
+
 void bn_func(int bn_size, int* opt) {
     BIGNUM* bn[BN_COUNT];
     BN_CTX* bn_ctx = BN_CTX_new();
@@ -13,6 +21,8 @@ void bn_func(int bn_size, int* opt) {
     }
     bn[0] = BN_new();
     BN_pseudo_rand(bn[0], bn_size/64, -1, 0);
+
+    // print_opt(opt, 6);
 
     if (opt[0])
         BN_add(result, bn[1], bn[2]);

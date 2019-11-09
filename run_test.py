@@ -10,6 +10,8 @@ from statistics import mean
 from pprint import pprint
 from shutil import copyfile
 
+MAKE_GRAPH = False
+
 COPY_RESULT = False
 TEX_DIR = '../../ta-latex/src/resources/csv/'
 
@@ -34,13 +36,13 @@ ARGS = {
     },
     'bn': {
         '1.tc_num': {
-            'add' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'div' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
-            'mul' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'modexp' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
-            'modmul' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
+            'add' : [128*16*i*8 for i in range(1, DATA_SIZE + 1)],
+            'mul' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
+            'div' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
+            'modexp' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
+            'modmul' : [32*i*8 for i in range(1, DATA_SIZE + 1)],
         },
-        # '2.opr': ['add', 'div', 'mul', 'modexp']
+        # '2.opr': ['add', 'mul', 'div', 'modexp', 'modmul']
         '2.opr': ['add']
     },
     'rsa_gen': {
@@ -170,7 +172,7 @@ def main(arg):
 
         for mode in test_modes:
             command_args = get_params(mode)
-            pprint(command_args)
+            # pprint(command_args)
             csv_headers = sorted(ARGS[mode].keys())
 
             test_data = []
@@ -197,6 +199,10 @@ def main(arg):
 
             if mode == 'bn':
                 separate_csv(filename)
+
+        if MAKE_GRAPH:
+            cmd = 'latexmk -pdf -outdir=result_data -cd result_data/graph.tex'
+            subprocess.run(cmd.split(' '), stdout=subprocess.PIPE)
 
     except KeyError as e:
         print("invalid_args")

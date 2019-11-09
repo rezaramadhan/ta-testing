@@ -71,7 +71,7 @@ void process_opts(char* opt, int* i) {
     else if (strcmp(opt, "modexp") == 0)
         i[4] = 1;
     else if (strcmp(opt, "modmul") == 0)
-        i[4] = 1;
+        i[5] = 1;
     else
         error("invalid bn_test options", 1);
 

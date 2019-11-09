@@ -1,7 +1,7 @@
 #define BN_COUNT 3
 #define TC_COUNT 29
 
-#define BN_OPR_COUNT 5
+#define BN_OPR_COUNT 6
 
 #define RUN_COUNT 1
 #define PRINT_DETAIL 1

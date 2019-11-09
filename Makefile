@@ -5,4 +5,4 @@ clean:
 	rm -f *.o
 
 compile:
-	gcc -o test.run src/test.c -L/opt/openssl/lib -lcrypto
+	gcc -o test.run src/test.c -I/opt/openssl/include -L/opt/openssl/lib -lcrypto
