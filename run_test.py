@@ -28,7 +28,7 @@ RSA_KDATA_DIFF = 0
 RSA_ESTART = 29
 RSA_EINCREMENT = 32
 
-DEVICE_ID = 1
+# DEVICE_ID = 1
 
 ARGS = {
     'dh': {
@@ -36,14 +36,14 @@ ARGS = {
     },
     'bn': {
         '1.tc_num': {
-            'add' : [128*16*i*8 for i in range(1, DATA_SIZE + 1)],
+            'add' : [128*256*i*8 for i in range(1, DATA_SIZE + 1)],
             'mul' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
             'div' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
             'modexp' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
             'modmul' : [32*i*8 for i in range(1, DATA_SIZE + 1)],
         },
-        # '2.opr': ['add', 'mul', 'div', 'modexp', 'modmul']
-        '2.opr': ['add']
+        '2.opr': ['add', 'mul', 'div', 'modexp', 'modmul']
+        # '2.opr': ['add']
     },
     'rsa_gen': {
         '1.key_size': [RSA_KINCREMENT * i for i in range(RSA_KSTART, DATA_SIZE + RSA_KSTART - RSA_KDATA_DIFF)],
@@ -146,7 +146,7 @@ def get_params(mode):
 
     return command_args
 
-def main(arg):
+def main(arg, node_id):
     # make file
     print("-------------------------------")
     print("Building tests")
@@ -194,7 +194,7 @@ def main(arg):
                 test_data.append(row)
 
             # pprint(test_data)
-            filename = RESULT_DIR + mode + str(DEVICE_ID) + '.csv'
+            filename = RESULT_DIR + mode + node_id + '.csv'
             print_file_csv(filename, sorted(header), test_data)
 
             if mode == 'bn':
@@ -208,7 +208,7 @@ def main(arg):
         print("invalid_args")
 
 if __name__ == '__main__':
-    if (len(sys.argv) == 2):
-        main(sys.argv[1])
+    if (len(sys.argv) == 3):
+        main(sys.argv[1], sys.argv[2])
     else:
         print("invalid_args")
