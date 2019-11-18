@@ -36,14 +36,14 @@ ARGS = {
     },
     'bn': {
         '1.tc_num': {
-            'add' : [128*256*i*8 for i in range(1, DATA_SIZE + 1)],
-            'mul' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
-            'div' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
-            'modexp' : [128*8*i*8 for i in range(1, DATA_SIZE + 1)],
-            'modmul' : [32*i*8 for i in range(1, DATA_SIZE + 1)],
+            'add' : [128*128*i*8 for i in range(1, DATA_SIZE + 1)],
+            'mul' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
+            'div' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
+            'modexp' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
+            'modmul' : [16*i*8 for i in range(1, DATA_SIZE + 1)],
         },
-        '2.opr': ['add', 'mul', 'div', 'modexp', 'modmul']
-        # '2.opr': ['add']
+        # '2.opr': ['add', 'mul', 'div', 'modexp', 'modmul']
+        '2.opr': ['add']
     },
     'rsa_gen': {
         '1.key_size': [RSA_KINCREMENT * i for i in range(RSA_KSTART, DATA_SIZE + RSA_KSTART - RSA_KDATA_DIFF)],
@@ -101,8 +101,10 @@ def separate_csv(filename):
         rows = fin.readlines()
 
         outfiles = {}
+        print("Separating",filename,"to:")
         for opr in ARGS['bn']['2.opr']:
             sep_fname = filename.replace('.', '_' + opr + '.')
+            print("   ", sep_fname)
             of = open(sep_fname, mode='w')
             of.write(rows[0])
             outfiles[opr] = of
