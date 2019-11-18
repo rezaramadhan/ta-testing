@@ -1,3 +1,5 @@
+OPENSSL_DIR=/opt/openssl_mod
+
 all : clean compile
 
 clean:
@@ -5,4 +7,4 @@ clean:
 	rm -f *.o
 
 compile:
-	gcc -o test.run src/test.c -I/opt/openssl/include -L/opt/openssl/lib -lcrypto
+	gcc -g -o test.run src/test.c -I$(OPENSSL_DIR)/include -L$(OPENSSL_DIR)/lib -lcrypto
