@@ -17,8 +17,14 @@ void handle_error() {
 
 void rsa_save_keys(RSA* rsa) {
     FILE *fp_public = NULL, *fp_private = NULL;
-    fp_public = fopen("key/public.pem", "w");
-    fp_private = fopen("key/private.pem", "w");
+    int size_bits = RSA_size(rsa)*8;
+    char fpubname[100];
+    char fprivname[100];
+    sprintf(fpubname, "key/rsa/%d_public.pem", size_bits);
+    sprintf(fprivname, "key/rsa/%d_private.pem", size_bits);
+
+    fp_public = fopen(fpubname, "w");
+    fp_private = fopen(fprivname, "w");
 
     // 2. save public key
     if (!PEM_write_RSAPublicKey(fp_public, rsa))
@@ -32,63 +38,55 @@ void rsa_save_keys(RSA* rsa) {
     fclose(fp_private);
 }
 
-void rsa_enc(int msg_size) {
+void rsa_enc(int key_size) {
     OpenSSL_add_all_algorithms();
     OpenSSL_add_all_ciphers();
     OpenSSL_add_all_digests();
     ERR_load_crypto_strings();
 
-
-    if (msg_size > 4096) {
-        fprintf(stderr, "MSG is bigger than RSA_size (4096)\n");
-        exit(1);
-    }
-
     // load keys
-    RSA *rsa_pub = NULL, *rsa_priv = NULL;
+    RSA *rsa_priv = NULL;
     // rsa_pub = RSA_new();
     // rsa_priv = RSA_new();
 
-    FILE *fp_public = NULL, *fp_private = NULL;
-    fp_public = fopen("key/public.pem", "r");
-    fp_private = fopen("key/private.pem", "r");
+    FILE *fp_private = NULL;
+    char fprivname[100];
+    sprintf(fprivname, "key/rsa/%d_private.pem", key_size);
 
-    if (fp_public == NULL || fp_private == NULL) {
-        printf("file err\n");
+    fp_private = fopen(fprivname, "r");
+
+    if (fp_private == NULL) {
+        printf("file err. Key %s doesn't exist.\n", fprivname);
         exit(1);
     }
 
     // printf("a\n");
-    rsa_pub = PEM_read_RSAPublicKey(fp_public, NULL, NULL, NULL);
     rsa_priv = PEM_read_RSAPrivateKey(fp_private, NULL, NULL, NULL);
 
-    fclose(fp_public);
     fclose(fp_private);
 
-    if (rsa_pub == NULL || rsa_priv == NULL)
+    if (rsa_priv == NULL)
         handle_error();
 
     // printf("%d %d\n", RSA_size(rsa_pub), RSA_size(rsa_priv));
 
     // public encrypt
-    unsigned char *msg = malloc(sizeof(char)*msg_size);
-    RAND_bytes(msg, msg_size);
+    unsigned char *msg = malloc(sizeof(char)*key_size);
+    RAND_bytes(msg, key_size);
 
     unsigned char *enc_msg;
-    enc_msg = (char*) calloc(RSA_size(rsa_pub), 8);
+    enc_msg = (char*) calloc(RSA_size(rsa_priv), 8);
     unsigned char *dec_msg;
-    dec_msg = (char*) calloc(RSA_size(rsa_pub), 8);
+    dec_msg = (char*) calloc(RSA_size(rsa_priv), 8);
     // // printf("%d\n", RSA_size(rsa));
-    RSA_public_encrypt(strlen(msg), msg, enc_msg, rsa_pub, RSA_PKCS1_OAEP_PADDING);
+    RSA_public_encrypt(strlen(msg), msg, enc_msg, rsa_priv, RSA_PKCS1_OAEP_PADDING);
     RSA_private_decrypt(RSA_size(rsa_priv), enc_msg, dec_msg, rsa_priv, RSA_PKCS1_OAEP_PADDING);
 
     // 4. free
-    //
     free(msg);
     free(enc_msg);
     free(dec_msg);
 
-    RSA_free(rsa_pub);
     RSA_free(rsa_priv);
 }
 

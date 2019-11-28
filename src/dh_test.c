@@ -20,19 +20,30 @@ void dh_test(int key_size) {
     if(NULL == (dh_alice = DH_new())) handleErrors();
     if(NULL == (dh_bob = DH_new())) handleErrors();
 
-    if(1 != DH_generate_parameters_ex(dh_alice, key_size, DH_GENERATOR_2, NULL)) handleErrors();
-    //
-    // // if(1 != DH_check(dh_alice, &codes)) handleErrors();
-    // // if(codes != 0)
-    // // {
-    // //     printf("DH_check failed\n");
-    // //     abort();
-    // // }
-    //
-    // /* Generate the public and private key pair */
+    FILE *fp_param = NULL;
+    char fparamname[100];
+    sprintf(fparamname, "key/dh/%d_dh.pem", key_size);
+
+    fp_param = fopen(fparamname, "r");
+
+    if (fp_param == NULL) {
+        printf("file err. Key %s doesn't exist.\n", fparamname);
+        exit(1);
+    }
+
+    dh_alice =  PEM_read_DHparams(fp_param, NULL, NULL, NULL);
+
+    fclose(fp_param);
+
+    if (dh_alice == NULL)
+        handle_error();
+
+
+    /* Generate the public and private key pair */
     if(1 != DH_generate_key(dh_alice)) handleErrors();
-    //
-    // /* Receive the public key from the peer.*/
+
+
+    /* Receive the public key from the peer.*/
     BIGNUM *p, *q, *g;
     p = BN_dup(DH_get0_p(dh_alice));
     q = BN_dup(DH_get0_q(dh_alice));
@@ -49,13 +60,6 @@ void dh_test(int key_size) {
 
     if(0 > (secret_size = DH_compute_key(secret, pubkey, dh_alice))) handleErrors();
 
-    // /* Do something with the shared secret */
-    // // printf("The shared secret is:\n");
-    // // BIO_dump_fp(stdout, secret, secret_size);
-    // // BIGNUM* bnsecret = NULL;
-    // // bnsecret = BN_bin2bn(secret, strlen(secret), NULL);
-    // // printf("secret_length %d bit\n", BN_num_bits(bnsecret));
-    // /* Clean up */
     OPENSSL_free(secret);
     DH_free(dh_alice);
     DH_free(dh_bob);

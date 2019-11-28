@@ -52,11 +52,25 @@ void bn_func(int bn_size, int* opt) {
         BN_exp(result, bn[5], bn[1], bn_ctx);
     }
     if (opt[4]){
+
+        // BN_MONT_CTX *bn_mont_ctx;
+        // if ((bn_mont_ctx = BN_MONT_CTX_new()) == NULL)
+        //     goto err;
+        // if (!BN_MONT_CTX_set(bn_mont_ctx, bn[6], bn_ctx))
+        //     goto err;
+        //
+        // if (!BN_to_montgomery(bn[1], bn[1], bn_mont_ctx, bn_ctx)) goto err;
+        // if (!BN_to_montgomery(bn[2], bn[2], bn_mont_ctx, bn_ctx)) goto err;
+        // BN_mod_mul_montgomery(result, bn[1], bn[2], bn_mont_ctx, bn_ctx);
+        // if (!BN_from_montgomery(result, result, bn_mont_ctx, bn_ctx)) goto err;
+        //
+        // BN_MONT_CTX_free(bn_mont_ctx);
+
         BN_mod_mul(result, bn[1], bn[2], bn[6], bn_ctx);
     }
     if (opt[5]){
         // printf("modexp\n");
-        BN_mod_exp(result, bn[1], bn[2], bn[0], bn_ctx);
+        BN_mod_exp(result, bn[5], bn[1], bn[6], bn_ctx);
     }
     if (opt[6]){ //mul_recursive
         BN_mul(result, bn[1], bn[2], bn_ctx);
@@ -65,6 +79,7 @@ void bn_func(int bn_size, int* opt) {
         BN_sqr(result, bn[1], bn_ctx);
     }
 
+err:
     BN_CTX_free(bn_ctx);
     BN_free(result);
     for (int i = 0; i < BN_COUNT; i++) {
