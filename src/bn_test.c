@@ -70,7 +70,7 @@ void bn_func(int bn_size, int* opt) {
     }
     if (opt[5]){
         // printf("modexp\n");
-        BN_mod_exp(result, bn[5], bn[1], bn[6], bn_ctx);
+        BN_mod_exp(result, bn[5], bn[2], bn[0], bn_ctx);
     }
     if (opt[6]){ //mul_recursive
         BN_mul(result, bn[1], bn[2], bn_ctx);

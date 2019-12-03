@@ -3,7 +3,7 @@
 
 #define BN_OPR_COUNT 8
 
-#define CONST_SIZE_BN 2048
+#define CONST_SIZE_BN 8096
 
 #define RUN_COUNT 1
 #define PRINT_DETAIL 1

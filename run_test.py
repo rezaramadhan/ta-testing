@@ -15,51 +15,53 @@ MAKE_GRAPH = False
 COPY_RESULT = False
 TEX_DIR = '../../ta-latex/src/resources/csv/'
 
-RUN_COUNT = 5
-DATA_SIZE = 100
+RUN_COUNT = 1
+BN_DATA_SIZE = 100
+RSA_DATA_SIZE = 10
+DH_DATA_SIZE = 10
 
 DH_START = 20
 DH_INCREMENT = 4
 
-RSA_KSTART = 32
-RSA_KINCREMENT = 16
+RSA_KSTART = 1
+RSA_KINCREMENT = 2048
 RSA_KDATA_DIFF = 0
 
-RSA_ESTART = 29
-RSA_EINCREMENT = 32
+RSA_ESTART = 8
+RSA_EINCREMENT = 2048
 
 # DEVICE_ID = 1
 
 ARGS = {
     'dh': {
-        '1.key_size': [DH_INCREMENT * i for i in range(DH_START, DATA_SIZE + DH_START)]
+        '1.key_size': [DH_INCREMENT * i for i in range(DH_START, DH_DATA_SIZE + DH_START)]
     },
     'bn': {
         '1.tc_num': {
-            'add' : [128*16*i*8 for i in range(1, DATA_SIZE + 1)],
-            'mul_recursive' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'mul' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'sqr' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'div' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
-            'modexp' : [8*i*8 for i in range(2, DATA_SIZE + 2)],
-            'modmul' : [128*i*8 for i in range(1, DATA_SIZE + 1)],
+            'add' : [128*16*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'mul_recursive' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'mul' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'sqr' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'div' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'modmul' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
+            'modexp' : [128*i*8 for i in range(1, 25 + 1)],
         },
         '2.opr': [
-            # 'add',
-            # 'mul_recursive',
-            # 'mul',
-            # 'sqr',
-            # 'div',
+            'add',
+            'mul_recursive',
+            'mul',
+            'sqr',
+            'div',
+            'modmul',
             'modexp',
-            # 'modmul',
         ]
     },
     'rsa_gen': {
-        '1.key_size': [RSA_KINCREMENT * i for i in range(RSA_KSTART, DATA_SIZE + RSA_KSTART - RSA_KDATA_DIFF)],
+        '1.key_size': [RSA_KINCREMENT * i for i in range(RSA_KSTART, RSA_DATA_SIZE + RSA_KSTART - RSA_KDATA_DIFF)],
         '2.e': [65537],
     },
     'rsa_enc': {
-        '1.msg_size': [RSA_EINCREMENT * i for i in range(RSA_ESTART, DATA_SIZE + RSA_ESTART)],
+        '1.key_size': [RSA_EINCREMENT * i for i in range(RSA_ESTART, RSA_DATA_SIZE + RSA_ESTART)],
     }
 }
 
@@ -72,9 +74,10 @@ def run_individual_test(args):
     print('Running test (' + str(RUN_COUNT) + ' times):', ' '.join(command))
     for i in range(RUN_COUNT):
         out = subprocess.run(command, stdout=subprocess.PIPE)
-        # print(out.stdout)
+        print(out.stdout.decode('utf-8').rstrip())
         result.append(float(out.stdout.decode('utf-8').rstrip()))
         # result.append(i)
+    print()
     return result
 
 def print_file_csv(filename, header, file_content):
@@ -129,6 +132,8 @@ def separate_csv(filename):
             of.close()
             copy_result(fname)
 
+    # delete old csv
+    os.remove(filename)
 
 def get_params(mode):
     command_args = []
@@ -194,8 +199,8 @@ def main(arg, node_id):
                 # print(arg)
                 command = [mode]
                 command.extend(a)
+                print(i, ': ', end='')
                 result = run_individual_test(command)
-                print(i, result, '\n')
                 i = i + 1
                 row = arg.copy()
                 row_avg = arg.copy()

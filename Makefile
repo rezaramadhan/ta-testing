@@ -7,4 +7,4 @@ clean:
 	rm -f *.o
 
 compile:
-	gcc -g -o test.run src/test.c -I$(OPENSSL_DIR)/include -L$(OPENSSL_DIR)/lib -lcrypto
+	gcc -g -o test.run src/test.c -I$(OPENSSL_DIR)/include -L$(OPENSSL_DIR)/lib -lcrypto -lm
