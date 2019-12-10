@@ -15,7 +15,7 @@ MAKE_GRAPH = False
 COPY_RESULT = False
 TEX_DIR = '../../ta-latex/src/resources/csv/'
 
-RUN_COUNT = 1
+RUN_COUNT = 7
 BN_DATA_SIZE = 100
 RSA_DATA_SIZE = 10
 DH_DATA_SIZE = 10
@@ -44,14 +44,13 @@ ARGS = {
             'sqr' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
             'div' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
             'modmul' : [64*i*8 for i in range(1, BN_DATA_SIZE + 1)],
-            'modexp' : [128*i*8 for i in range(1, 25 + 1)],
+            'modexp' : [64*i*8 for i in range(10, 25 + 10)],
         },
         '2.opr': [
             'add',
             'mul_recursive',
             'mul',
             'sqr',
-            'div',
             'modmul',
             'modexp',
         ]
@@ -67,6 +66,16 @@ ARGS = {
 
 RESULT_DIR = 'result_data/'
 
+def rm_dt(data):
+    sorted_data = sorted(data)
+    THR = 1.05
+    l = []
+    for d in sorted_data:
+        n = d / sorted_data[0]
+        if (n < THR):
+            l.append(d)
+    return l
+
 def run_individual_test(args):
     command = ['./test.run']
     command.extend(args)
@@ -77,8 +86,11 @@ def run_individual_test(args):
         print(out.stdout.decode('utf-8').rstrip())
         result.append(float(out.stdout.decode('utf-8').rstrip()))
         # result.append(i)
+
     print()
-    return result
+    l = rm_dt(result)
+    pprint(l)
+    return l
 
 def print_file_csv(filename, header, file_content):
     with open(filename, mode='w') as csv_file:
